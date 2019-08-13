@@ -1,10 +1,10 @@
 # hadoop_spark_autoinstall
  Hadoop spark one-click deployment
 
-##.first you need download java,hadoop,spark package!
-##.put this package into app_soft/hadoop ,app_soft/java,app_soft/spark
-###.need configure service_hosts file
-#++++++++++++++++service_hosts contents+++++++++++++++
+## first you need download java,hadoop,spark package!
+## put this package into app_soft/hadoop ,app_soft/java,app_soft/spark
+### need configure service_hosts file
+# ++++++++++++++++service_hosts contents+++++++++++++++
 [service_master]
 sr209
 [service_master:vars]
@@ -17,5 +17,5 @@ sr212
 [service_slave:vars]
 ansible_ssh_user="root"
 ansible_ssh_pass="abc123"
-++++++++++++++++++++++++++++++++++++++++++++++++++++
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++
 4.
