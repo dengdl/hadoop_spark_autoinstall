@@ -1,13 +1,12 @@
 ## hadoop_spark_autoinstall
  Hadoop spark one-click deployment
-
 ### 应用场景
-
-# 可以通过简单几步设定快速部署hadoop
+可以通过简单几步设定快速部署hadoop
 ### 
-
+* first you need download java,hadoop,spark package!
+* put this package into app_soft/hadoop ,app_soft/java,app_soft/spark
+* need configure service_hosts file
 ```
-
 [service_master]
 sr209
 [service_master:vars]
