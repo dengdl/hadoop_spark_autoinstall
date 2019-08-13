@@ -3,13 +3,13 @@
 
 ### 应用场景
 
-可以通过简单几步设定快速部署hadoop
+# 可以# 通过简单几步设定快速部署hadoop
 ### 
 
 
 
 ```
-++++++++++++++++service_hosts contents+++++++++++++++
+
 [service_master]
 sr209
 [service_master:vars]
@@ -22,7 +22,7 @@ sr212
 [service_slave:vars]
 ansible_ssh_user="root"
 ansible_ssh_pass="abc123"
-++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 ```
 
 
