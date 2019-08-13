@@ -3,9 +3,9 @@
 ### 应用场景
 可以通过简单几步设定快速部署hadoop
 ### 
-1 first you need download java,hadoop,spark package!
-2 put this package into app_soft/hadoop ,app_soft/java,app_soft/spark
-3 need configure service_hosts file
+1. first you need download java,hadoop,spark package!
+2. put this package into app_soft/hadoop ,app_soft/java,app_soft/spark
+3. need configure service_hosts file
 ```
 [service_master]
 sr209
