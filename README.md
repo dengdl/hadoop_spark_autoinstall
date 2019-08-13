@@ -23,5 +23,4 @@ ansible_ssh_pass="abc123"
 ```
 4. run hadoop_spark_autoinstall
 sh auto_install_hadoop_spark.sh
-
-###也可以直接运行auto_install_hadoop_spark.sh 根据提示完成设定
+### 也可以直接运行auto_install_hadoop_spark.sh 根据提示完成设定
