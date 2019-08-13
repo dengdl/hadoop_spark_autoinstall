@@ -1,0 +1,13 @@
+- name: Format active namenode hdfs
+  shell:  sh {{install_folder}}/hadoop/bin/hdfs namenode -format -force
+  become: true
+  become_user: sparkuser
+- name: Start hdfs cluster
+  shell: sh {{install_folder}}/hadoop/sbin/start-all.sh
+  become: true
+  become_user: sparkuser
+
+- name: Start spark 
+  shell: sh {{install_folder}}/spark/sbin/start-all.sh
+  become: true
+  become_user: sparkuser

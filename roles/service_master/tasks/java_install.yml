@@ -1,0 +1,23 @@
+- name: copy Java install file
+  copy: src={{soft_path}}/java/{{jv_version}}.tar.gz dest={{download_folder}}
+- name: Create Java folder 
+  file: "state=directory path={{jv_folder}}" 
+- name: Extract Java archive 
+  unarchive: src={{jv_archive}} dest={{jv_folder}} copy=no
+- name: Create symlink for easier update 
+  file: "state=link src={{jv_folder}}/{{jv_version}} dest={{jv_folder}}/{{jv_alias}}" 
+- name: Make Java available for system 
+  command: 'update-alternatives --install "/usr/bin/java" "java" "{{jv_folder}}/{{jv_alias}}/bin/java" 1' 
+- name: reset java env
+  lineinfile: path=/home/{{user}}/.bashrc line="PATH=${JAVA_HOME}/bin:$PATH" state=absent
+- name: Set java environment
+  lineinfile: dest={{item.dest}} regexp={{item.regexp}} line={{item.line}}
+  with_items:
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^JAVA_HOME=',line: 'JAVA_HOME=/usr/java/{{jv_alias}}' }
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^JRE_HOME=',line: 'JRE_HOME=${JAVA_HOME}/jre' }
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^CLASS_PATH=',line: 'CLASS_PATH=$JAVA_HOME/lib:$JAVA_HOME/jre/lib' }
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^PATH=${JAVA_HOME}/bin:$PATH',line: 'PATH=${JAVA_HOME}/bin:$PATH' }
+- name : Set java environment
+  lineinfile : dest=/home/{{user}}/.bashrc regexp="^export JAVA_HOME" line="export JAVA_HOME"
+- name: clean java installation package
+  file: path={{jv_archive}} state=absent

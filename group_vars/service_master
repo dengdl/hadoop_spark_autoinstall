@@ -1,0 +1,28 @@
+#########server vars##########
+#master: sr209 
+#slaves: sr210,sr211,sr212
+#########user vars########################
+user: sparkuser
+group: sparkuser
+#This user and group can not be changed!!!!
+#*********************************************
+#*The flowing vars you can setup by yourself!*
+#*********************************************
+###############soft path vars#############
+soft_path: ./app_soft
+download_folder: /usr/src
+install_folder: "/home/{{user}}"
+#######java install vars##########
+jv_version: jdk1.8.0_111
+jv_archive: "{{download_folder}}/{{jv_version}}.tar.gz"
+jv_folder: /usr/java
+jv_alias: java-8
+#######hadoop install vars##########
+hdp_version: hadoop-2.7.5
+hdp_archive: "{{download_folder}}/{{hdp_version}}.tar.gz"
+#exmple: If multiple disks are separated by ',' /mnt/DP_disk1/hdfs,/mnt/DP_disk2/hdfs
+dfs_datanode_data_dir: /mnt/DP_disk1/hdfs
+yarn_nodemanager_local_dirs: /mnt/DP_disk1/hadoop
+#####spark install vars###################
+spk_version: spark-2.3.0-bin-hadoop2.7
+spk_archive: "{{download_folder}}/{{spk_version}}.tgz"

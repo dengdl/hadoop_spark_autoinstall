@@ -1,0 +1,30 @@
+- name: delete old spark file,rebuild
+  file: dest={{item.dest}} state=absent
+  with_items:
+    - { dest: '{{install_folder}}/{{spk_version}}'}
+- name: copy spark install file 
+  copy: src={{soft_path}}/spark/{{spk_version}}.tgz dest={{download_folder}}  
+- name: Extract spark archive 
+  unarchive: src={{spk_archive}} dest={{install_folder}} copy=no
+- name: Fix ownership  
+  file: "state=directory path={{install_folder}}/{{spk_version}} owner={{user}} group={{group}} recurse=yes" 
+- name: Create symlink for easier update
+  file: "state=link src={{install_folder}}/{{spk_version}} dest={{install_folder}}/spark owner={{user}} group={{group}}"
+- name: reset spark env
+  lineinfile: path=/home/{{user}}/.bashrc line="PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin" state=absent
+- name: Set spark env
+  lineinfile: dest={{item.dest}} regexp={{item.regexp}} line={{item.line}}
+  with_items:
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^SPARK_HOME=',line: 'SPARK_HOME={{install_folder}}/spark' }
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^PATH=$PATH:$SPARK_HOME', line: 'PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin' }
+- name: copy spark configuration file and change mode
+  template: src={{item.src}} dest={{item.dest}} owner={{user}} group={{group}} mode=0644
+  with_items:
+    - { src: 'spark/slaves',dest: '{{install_folder}}/spark/conf'}
+    - { src: 'spark/spark-env.sh',dest: '{{install_folder}}/spark/conf'}
+- name: change  mode
+  file: path={{item.path}} owner={{user}} group={{group}} recurse=yes
+  with_items:
+  - { path: '{{install_folder}}/{{spk_version}}'}
+- name: clean spark installation package
+  file: path={{spk_archive}} state=absent

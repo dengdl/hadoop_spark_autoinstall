@@ -1,0 +1,7 @@
+- include: user_group_sshkey_add.yml
+- include: java_install.yml 
+- include: hadoop_install.yml 
+- include: spark_install.yml
+- include: exec_script.yml
+- include: service_start.yml
+

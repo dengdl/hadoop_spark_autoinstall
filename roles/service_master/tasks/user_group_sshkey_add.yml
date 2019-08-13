@@ -1,0 +1,21 @@
+- name: create  group {{group}}
+  group: name={{group}}  system=yes
+- name: check and create user {{user}} group {{group}}
+  user: name={{user}}  groups={{group}}  password={{'abc123'|password_hash('sha512')}} update_password=always append=yes state=present
+- name: config /etc/sudoers
+  lineinfile: dest=/etc/sudoers state=present line='{{item}}' validate='visudo -cf %s'
+  with_items:
+            - "{{ user }} ALL=(ALL) NOPASSWD: ALL"
+            - "Defaults: {{ user }} !requiretty"
+- name: configure ssh ask confirm
+  lineinfile: dest=/etc/ssh/ssh_config regexp="#   StrictHostKeyChecking ask" line="StrictHostKeyChecking no" backrefs=yes
+- name: create ssh dir 
+  file: dest=/home/{{user}}/.ssh state=directory 
+- name: copy {{user}} authorized
+  copy: src=ssh_key/authorized_keys  dest=/home/{{user}}/.ssh/ owner={{user}} group={{user}} mode=0644
+- name: copy {{user}} id_rsa
+  copy: src=ssh_key/id_rsa  dest=/home/{{user}}/.ssh/ owner={{user}} group={{user}} mode=0600
+- name: copy {{user}} id_rsa.pub
+  copy: src=ssh_key/id_rsa.pub  dest=/home/{{user}}/.ssh/ owner={{user}} group={{user}} mode=0644
+- name: copy {{user}} known_hosts
+  copy: src=ssh_key/known_hosts  dest=/home/{{user}}/.ssh/ owner={{user}} group={{user}} mode=0644

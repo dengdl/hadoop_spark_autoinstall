@@ -1,0 +1,8 @@
+- name: configure and deploy the service and application code
+  hosts: service_slave
+  roles:
+   - service_slave
+- name: hadoop_spark service_master configuration to master server
+  hosts: service_master
+  roles:
+    - service_master

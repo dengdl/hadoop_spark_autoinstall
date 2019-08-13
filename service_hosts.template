@@ -1,0 +1,12 @@
+[service_master]
+sr209
+[service_master:vars]
+ansible_ssh_user="root"
+ansible_ssh_pass="abc123"
+[service_slave]
+sr210
+sr211
+sr212
+[service_slave:vars]
+ansible_ssh_user="root"
+ansible_ssh_pass="abc123"

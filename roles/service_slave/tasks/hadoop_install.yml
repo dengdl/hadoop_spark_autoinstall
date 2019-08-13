@@ -1,0 +1,54 @@
+- name: delete old hadoop file,rebuild
+  file: dest={{item.dest}} state=absent
+  with_items:
+    - { dest: '{/tmp/dfs'}
+    - { dest: '{{install_folder}}/{{hdp_version}}'}
+    - { dest: '{{install_folder}}/hadoop'}
+    - { dest: '{{dfs_datanode_data_dir}}'}
+    - { dest: '{{yarn_nodemanager_local_dirs}}'}
+- name: copy hadoop install file
+  copy: src={{soft_path}}/hadoop/{{hdp_version}}.tar.gz dest={{download_folder}}
+- name: Extract hadoop archive 
+  unarchive: src={{hdp_archive}} dest={{install_folder}} copy=no
+- name: Fix ownership  
+  file: "state=directory path={{install_folder}}/{{hdp_version}} owner={{user}} group={{group}}" 
+- name: Create symlink for easier update 
+  file: "state=link src={{install_folder}}/{{hdp_version}} dest={{install_folder}}/hadoop owner={{user}} group={{group}}"    
+- name: reset hadoop env
+  lineinfile: path=/home/{{user}}/.bashrc line="PATH=$PATH:$HADOOP_INSTALL/bin:$HADOOP_INSTALL/sbin" state=absent
+- name: Set hadoop env
+  lineinfile: dest={{item.dest}} regexp={{item.regexp}} line={{item.line}}
+  with_items:
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^HADOOP_INSTALL=',line: 'HADOOP_INSTALL={{install_folder}}/hadoop'}
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^PATH=$PATH:$HADOOP_INSTALL' ,insertafter: 'HADOOP_INSTALL=', line: 'PATH=$PATH:$HADOOP_INSTALL/bin:$HADOOP_INSTALL/sbin'}
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^HADOOP_MAPRED_HOME=',line: 'HADOOP_MAPRED_HOME=$HADOOP_INSTALL' }
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^HADOOP_COMMON_HOME=',line: 'HADOOP_COMMON_HOME=$HADOOP_INSTALL' }
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^HADOOP_HDFS_HOME=',line: 'HADOOP_HDFS_HOME=$HADOOP_INSTALL' }
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^YARN_HOME=',line: 'YARN_HOME=$HADOOP_INSTALL' }
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^HADOOP_HOME=',line: 'HADOOP_HOME=$HADOOP_INSTALL' }
+         - { dest: '/home/{{user}}/.bashrc',regexp: '^HADOOP_CONF_DIR=',line: 'HADOOP_CONF_DIR=${HADOOP_HOME}"/etc/hadoop"' }
+- name: create hadoop dir namenode
+  file: dest={{install_folder}}/hadoop/data/namenode  owner={{user}} group={{group}} mode=0755 state=directory
+- name: create haddop dir logs
+  file: dest={{install_folder}}hadoop/logs  owner={{user}} group={{group}} mode=0755 state=directory
+- name: change  mode
+  file: path={{item.path}} owner={{user}} group={{group}} recurse=yes
+  with_items:
+  - { path: '{{install_folder}}/{{hdp_version}}'}
+- name: copy hadoop configuration file
+  template: src={{item.src}} dest={{item.dest}} owner={{user}} group={{group}} mode=0644
+  with_items:
+    - { src: 'hadoop/slaves',dest: '{{install_folder}}/hadoop/etc/hadoop'}
+    - { src: 'hadoop/core-site.xml',dest: '{{install_folder}}/hadoop/etc/hadoop'}
+    - { src: 'hadoop/hdfs-site.xml',dest: '{{install_folder}}/hadoop/etc/hadoop'}
+    - { src: 'hadoop/mapred-site.xml',dest: '{{install_folder}}/hadoop/etc/hadoop'}
+    - { src: 'hadoop/yarn-site.xml',dest: '{{install_folder}}/hadoop/etc/hadoop'}
+    - { src: 'hadoop/hadoop-env.sh',dest: '{{install_folder}}/hadoop/etc/hadoop'}
+    - { src: 'hadoop/yarn-env.sh',dest: '{{install_folder}}/hadoop/etc/hadoop'}
+#- name: change  mode
+#  file: path={{item.path}} owner={{user}} group={{group}} recurse=yes
+#  with_items:
+#  - { path: '{{install_folder}}/{{hdp_version}}'}
+#  - { path: '{{install_folder}}/hadoop'}
+- name: clean hadoop installation package
+  file: path={{hdp_archive}} state=absent
