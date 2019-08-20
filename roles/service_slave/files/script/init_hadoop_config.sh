@@ -1,4 +1,21 @@
 #!/bin/bash
+
+#disabile selinux
+function fn_set_selinx () {
+cp -a /etc/selinux/config /etc/selinux/config_bak
+sed -i  "s/^SELINUX=enforcing/SELINUX=disabled/g"  /etc/selinux/config
+}
+STATUS_SELINUX=`cat /etc/selinux/config | grep ^SELINUX= | awk -F "=" '{print$2}'`
+if [  ${STATUS_SELINUX} == enforcing ]
+then
+        fn_set_selinx
+#else
+#        continue
+fi
+#disable  firewalld.service
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+
 f_f=`cat /home/sparkuser/hadoop/etc/hadoop/hdfs-site.xml|grep -v '^$'|sed 's/ //g'|awk '/dfs.datanode.data.dir/,/<\/value>/'|awk '/<value>/,/<\/value>/'`
 d_f="${f_f#*>}"
 e_f="${d_f%<*}"

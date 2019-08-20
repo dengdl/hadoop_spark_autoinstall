@@ -1,13 +1,5 @@
 #!/bin/bash
-#check os  version
-OS_VERSION=`cat /etc/centos-release | awk -F " " '{print$4}' | awk -F "." '{print$1}'`
-if [  ${OS_VERSION} -eq 7 ]
-then
-        echo  "the system is CentOS7 ,The system meets the requirements and continues"
-else
-        echo -e  "\033[41;37m you should install OS system by CentOS-7.iso(Base Web server). \033[0m"
-        exit 1
-fi
+
 #install ansible 
 if [ `rpm -qa|grep ansible|wc -l` != 0 ]
 then
@@ -154,8 +146,8 @@ fi
 ###########auto deploy app#######################
 ansible-playbook -i $(pwd)/service_hosts $(pwd)/service_install.yml
 echo `date "+%Y-%m-%d %H:%M:%S"` 
-echo -e "\033[33m ################################# \033[0m"
-echo -e "\033[33m ###Configure server successful### \033[0m"
-echo -e "\033[35m ###Master:    $master_IP    ### \033[0m"
+echo -e "\033[33m ################################## \033[0m"
+echo -e "\033[33m ###Configure server successful#### \033[0m"
+echo -e "\033[35m ###Master:    $master_IP    ###### \033[0m"
 echo -e "\033[36m ***service Username: sparkuser *** \033[0m"
-echo -e "\033[33m ################################# \033[0m"
+echo -e "\033[33m ################################## \033[0m"
